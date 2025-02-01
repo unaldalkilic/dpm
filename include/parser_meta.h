@@ -9,6 +9,8 @@
 enum class CommandType {
     INSTALL,
     REMOVE,
+    HELP,
+    PACK,
     UNKNOWN
 };
 
@@ -24,7 +26,8 @@ struct Command {
 
 const std::unordered_map<std::string, CommandType> string_to_command_type = {
     {"install", CommandType::INSTALL},
-    {"remove", CommandType::REMOVE}
+    {"remove", CommandType::REMOVE},
+    {"help", CommandType::HELP}
 };
 
 const std::unordered_map<std::string, Option> string_to_option = {

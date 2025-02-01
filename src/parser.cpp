@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../include/parser/parser.h"
+#include "../include/parser.h"
 
 Command Parser::parse(const int argc, const char* argv[]){
     Command result;

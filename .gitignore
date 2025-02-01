@@ -32,4 +32,6 @@
 *.app
 
 # dpm
+dpm
+main
 .vscode
