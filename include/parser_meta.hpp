@@ -1,8 +1,8 @@
-#ifndef PARSER_META_H
-#define PARSER_META_H
+#ifndef PARSER_META_HPP
+#define PARSER_META_HPP
 
 #include <unordered_set>
-#include <unordered_map>
+#include "data.hpp"
 #include <vector>
 #include <string>
 
@@ -10,12 +10,14 @@ enum class CommandType {
     INSTALL,
     REMOVE,
     HELP,
+    VERSION,
     PACK,
-    UNKNOWN
+    NONE
 };
 
 enum class Option {
-    YES
+    YES,
+    NONE
 };
 
 struct Command {
@@ -24,15 +26,18 @@ struct Command {
     std::vector<std::string> arguments;
 };
 
-const std::unordered_map<std::string, CommandType> string_to_command_type = {
+const Dictionary<std::string, CommandType> string_to_command_type({
     {"install", CommandType::INSTALL},
     {"remove", CommandType::REMOVE},
-    {"help", CommandType::HELP}
-};
+    {"help", CommandType::HELP},
+    {"version", CommandType::VERSION}
+});
 
-const std::unordered_map<std::string, Option> string_to_option = {
-    {"y", Option::YES}
-};
+
+const Dictionary<std::string, Option> string_to_option({
+    {"y", Option::YES},
+    {"yes", Option::YES}
+});
 
 
 #endif

@@ -1,4 +1,4 @@
-#include "../include/dependency_manager.h"
+#include "../include/dependency_manager.hpp"
 
 bool DependencyManager::is_command_available(const std::string& command) {
 #ifdef _WIN32

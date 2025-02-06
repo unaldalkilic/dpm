@@ -1,7 +1,7 @@
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef PARSER_HPP
+#define PARSER_HPP
 
-#include "parser_meta.h"
+#include "parser_meta.hpp"
 
 class Parser {
     public:

@@ -32,9 +32,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     is_test = args.test
 
-    include_str = " ".join(file_traverser(INCLUDE, ".h"))
+    include_str = " ".join(file_traverser(INCLUDE, ".hpp"))
     src_str = " ".join(file_traverser(SOURCE, ".cpp"))
-    test_str = " ".join(file_traverser(TEST, ".cpp")) + " " + " ".join(file_traverser(TEST, ".h")) if is_test else ""
+    test_str = " ".join(file_traverser(TEST, ".cpp")) + " " + " ".join(file_traverser(TEST, ".hpp")) if is_test else ""
     command = f"g++ {MAIN} {src_str} {include_str} {test_str} -o {PROGRAM}"
     print(output_for_debug(src_str+" "+include_str+" "+test_str))
     os.system(command)

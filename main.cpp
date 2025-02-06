@@ -1,5 +1,5 @@
-#include "./include/parser.h"
-#include "./include/engine.h"
+#include "./include/parser.hpp"
+#include "./include/engine.hpp"
 
 int main(const int argc, const char* argv[]) {
     Parser parser;

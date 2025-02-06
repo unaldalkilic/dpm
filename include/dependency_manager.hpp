@@ -1,5 +1,5 @@
-#ifndef DEPENDENCY_MANAGER_H
-#define DEPENDENCY_MANAGER_H
+#ifndef DEPENDENCY_MANAGER_HPP
+#define DEPENDENCY_MANAGER_HPP
 
 #include <iostream>
 #include <cstdlib>
