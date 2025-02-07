@@ -23,18 +23,27 @@ enum class Colors { // Check for ansii color codes
     GREEN = 32,
     YELLOW = 33,
     BLUE = 34,
+    WHITE = 37
 };
 
 std::string get_cwd();
 std::string version_string_from_int_array(std::tuple<int*, int> version_tuple);
-void print(std::string& content, OutputType type = OutputType::NONE);
-
+std::string string(const std::string& content, const OutputType type = OutputType::NONE);
+void print(const std::string& content, const OutputType type = OutputType::NONE);
 
 const Dictionary<OutputType, Colors> output_type_colors_map({
+    {OutputType::NONE, Colors::WHITE},
     {OutputType::ERROR, Colors::RED},
     {OutputType::INFO, Colors::BLUE},
     {OutputType::SUCCESS, Colors::GREEN},
     {OutputType::WARNING, Colors::YELLOW}
 });
+
+template <typename Enumeration>
+auto enum_to_integer(Enumeration const value)
+    -> typename std::underlying_type<Enumeration>::type
+{
+    return static_cast<typename std::underlying_type<Enumeration>::type>(value);
+}
 
 #endif

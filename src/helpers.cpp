@@ -25,10 +25,11 @@ std::string version_string_from_int_array(std::tuple<int*, int> version_tuple) {
     return result;
 }
 
-void print(std::string& content, OutputType type) {
-    if (type == OutputType::NONE)
-        std::cout << content << "\n";
-    else
-        std::cout << "\n";
-        // std::cout << "\e[0;" << output_type_colors_map << "m"; TODO continue from here
+std::string stylish_string(const std::string& content, const OutputType type) {
+    Colors output_color = output_type_colors_map.get(type).value_or(Colors::WHITE);
+    return "\e[0;" + std::to_string(enum_to_integer(output_color)) + "m" + content + "\e[0m";
+}
+
+void print(const std::string& content, const OutputType type) {
+    std::cout << stylish_string(content, type) << "\n";
 }
