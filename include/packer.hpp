@@ -2,12 +2,25 @@
 #define PACKER_HPP
 
 #include <string>
+#include "dictionary.hpp"
+#include <unordered_set>
 
 class Packer{
 public:
-    void pack(std::string& path);
-    void depack(std::string& package_path);
-    std::string get_dpmeta_string(std::string& package_path);
+    void pack(const std::string& path);
+    void depack(const std::string& package_path);
+    Dictionary<std::string, std::string> get_dpmeta(const std::string& package_path);
+private:
+    bool validate_dpmeta(const std::string& path);
+    Dictionary<std::string, std::string> read_dpmeta(const std::string& path);
+};
+
+const std::unordered_set<std::string> mandatory_dpmeta_fields = {
+    "name", "version", "author", "author-mail"
+};
+
+const std::unordered_set<std::string> optional_dpmeta_fields = {
+    "dependent", "dependent-linux", "dependent-windows"
 };
 
 #endif

@@ -2,7 +2,7 @@
 #define PARSER_META_HPP
 
 #include <unordered_set>
-#include "data.hpp"
+#include "dictionary.hpp"
 #include <vector>
 #include <string>
 
@@ -30,7 +30,8 @@ const Dictionary<std::string, CommandType> string_to_command_type({
     {"install", CommandType::INSTALL},
     {"remove", CommandType::REMOVE},
     {"help", CommandType::HELP},
-    {"version", CommandType::VERSION}
+    {"version", CommandType::VERSION},
+    {"pack", CommandType::PACK}
 });
 
 

@@ -3,7 +3,8 @@
 
 #include <string>
 #include <tuple>
-#include "data.hpp"
+#include <vector>
+#include "dictionary.hpp"
 #ifdef _WIN32
 #include <dirent.h>
 #else
@@ -30,6 +31,7 @@ std::string get_cwd();
 std::string version_string_from_int_array(std::tuple<int*, int> version_tuple);
 std::string string(const std::string& content, const OutputType type = OutputType::NONE);
 void print(const std::string& content, const OutputType type = OutputType::NONE);
+std::vector<std::string> split(const std::string& content, const std::string& delimeter = " ");
 
 const Dictionary<OutputType, Colors> output_type_colors_map({
     {OutputType::NONE, Colors::WHITE},

@@ -29,4 +29,9 @@ public:
     explicit TargetNotExist(const std::string& msg) : DPMException(msg) {}
 };
 
+class InvalidPackage : public DPMException {
+public:
+    explicit InvalidPackage(const std::string& msg) : DPMException(msg) {}
+};
+
 #endif

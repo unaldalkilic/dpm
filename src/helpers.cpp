@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../include/helpers.hpp"
+#include <sstream>
 
 std::string get_cwd() {
     char cwd[1024];
@@ -32,4 +33,27 @@ std::string stylish_string(const std::string& content, const OutputType type) {
 
 void print(const std::string& content, const OutputType type) {
     std::cout << stylish_string(content, type) << "\n";
+}
+
+std::vector<std::string> split(const std::string& content, const std::string& delimiter) {
+    std::vector<std::string> result;
+
+    if (delimiter.length() == 1) { 
+        std::istringstream stream(content);
+        std::string token;
+        char delim = delimiter[0];
+        
+        while (std::getline(stream, token, delim)) {
+            result.push_back(token);
+        }
+    } else {
+        size_t start = 0, end;
+        while ((end = content.find(delimiter, start)) != std::string::npos) {
+            result.push_back(content.substr(start, end - start));
+            start = end + delimiter.length();
+        }
+        result.push_back(content.substr(start));
+    }
+
+    return result;
 }
