@@ -12,6 +12,7 @@ public:
     Dictionary<std::string, std::string> get_dpmeta(const std::string& package_path);
 private:
     bool validate_dpmeta(const std::string& path);
+    bool validate_dpmeta(Dictionary<std::string, std::string> dpmeta_content_dictionary);
     Dictionary<std::string, std::string> read_dpmeta(const std::string& path);
 };
 
