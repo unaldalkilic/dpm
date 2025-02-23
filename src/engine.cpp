@@ -1,5 +1,6 @@
 #include "../include/engine.hpp"
 #include "../include/helpers.hpp"
+#include <iostream>
 
 bool Engine::run(Command command) {
     // First, look at which type the command is
@@ -13,7 +14,12 @@ bool Engine::run(Command command) {
         break;
     case CommandType::PACK:
         for (std::string path: command.arguments)
-            packer.pack(get_cwd() + "/" + path);
+            try { packer.pack(get_cwd() + "/" + path); }
+            catch (const std::exception &e) { print(e.what(), OutputType::ERROR); }
+    case CommandType::DPMETA:
+        for (std::string package_path: command.arguments)
+            try { std::cout << packer.get_package_dpmeta(package_path) + "\n"; } 
+            catch (const std::exception &e) { print(e.what(), OutputType::ERROR); }
     default:
         break;
     }

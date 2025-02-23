@@ -12,6 +12,7 @@ enum class CommandType {
     HELP,
     VERSION,
     PACK,
+    DPMETA,
     NONE
 };
 
@@ -31,7 +32,8 @@ const Dictionary<std::string, CommandType> string_to_command_type({
     {"remove", CommandType::REMOVE},
     {"help", CommandType::HELP},
     {"version", CommandType::VERSION},
-    {"pack", CommandType::PACK}
+    {"pack", CommandType::PACK},
+    {"dpmeta", CommandType::DPMETA}
 });
 
 

@@ -34,7 +34,7 @@ void Packer::pack(const std::string& path) {
     std::string dp_path = get_cwd() + "/out.dp";
     std::ofstream dp_file (dp_path, std::ios::binary);
     if (!dp_file)
-        throw std::runtime_error(dp_path+ " Package cannot be created!");
+        throw std::runtime_error(dp_path+ " package cannot be created!");
 
     dp_file.write("DPMXPACK", 8); // magic 8 bytes
     
@@ -90,14 +90,18 @@ Dictionary<std::string, std::string> Packer::read_dpmeta(const std::string& path
     if (! std::filesystem::exists(path))
         throw TargetNotExist("Given path " + path + " does not exist! So cannot read the dpmeta");
 
-    Dictionary<std::string, std::string> result;
     std::string content = read_file(path);
+    return dpmeta_string_to_dict(content);
+}
 
-    std::vector<std::string> lines = split(content, "\n");
+Dictionary<std::string, std::string> Packer::dpmeta_string_to_dict(const std::string& dpmeta_string) {
+    Dictionary<std::string, std::string> result;
+
+    std::vector<std::string> lines = split(dpmeta_string, "\n");
     for (std::string line: lines) {
         std::vector<std::string> parts = split(line, ":");
         if (parts.size() != 2)
-            throw InvalidPackage("Given dpmeta file " + path + " is in wrong format!");
+            throw InvalidPackage("Given dpmeta file is in wrong format!");
         result.add(parts[0], parts[1]);
     }
 
@@ -167,4 +171,45 @@ void Packer::write_platform_section(std::ofstream &out, const std::string& platf
             out.write(file_entry.content.data(), file_entry.content_sizeof);
         }
     }
+}
+
+std::string Packer::get_package_dpmeta(const std::string& package_path) {
+    if (! is_dp_package(package_path))
+        throw InvalidPackage("Package " + package_path + " is not a .dp package!");
+    
+    std::ifstream dp_file(package_path, std::ios::binary);
+    if (! dp_file) throw std::runtime_error(package_path + " package cannot be read!");
+
+    dp_file.seekg(8); // Change position to dpmeta sizeof section
+    uint64_t dpmeta_sizeof;
+    dp_file.read(reinterpret_cast<char*>(&dpmeta_sizeof), sizeof(uint64_t));
+    if (dp_file.gcount() != static_cast<std::streamsize>(sizeof(uint64_t))) throw std::runtime_error("Failed to read dpmeta of the package!");
+
+    dp_file.seekg(48); // change position to dpmeta content section
+    char dpmeta_content[dpmeta_sizeof];
+    dp_file.read(dpmeta_content, dpmeta_sizeof);
+    if (dp_file.gcount() != static_cast<std::streamsize>(dpmeta_sizeof)) throw std::runtime_error("Failed to read dpmeta of the package!");
+
+    return std::string(dpmeta_content, dpmeta_sizeof);
+}
+
+bool Packer::is_dp_package(const std::string& package_path) {
+    if (! std::filesystem::exists(package_path)) 
+        throw TargetNotExist("Given package path "+ package_path+" does not exists!");
+
+    if (package_path.size() < 3 || package_path.rfind('.') == std::string::npos || package_path.substr(package_path.rfind('.')) != ".dp")  
+        throw InvalidPackage("Given package " + package_path + " has invalid extension! It must be .dp");
+
+    std::ifstream dp_file(package_path, std::ios::binary);
+    if (! dp_file)
+        throw std::runtime_error(package_path + " package cannot be read!");
+
+    // Read and check the magic bytes, it must be DPMXPACK //
+    char magic[8];
+    dp_file.read(magic, 8);
+    if (dp_file.gcount() != static_cast<std::streamsize>(8)) throw std::runtime_error("Failed to read given .dp package magic bytes!");
+
+    dp_file.close();
+
+    return std::string(magic, 8) == "DPMXPACK";
 }
