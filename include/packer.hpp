@@ -4,6 +4,7 @@
 #include <string>
 #include "dictionary.hpp"
 #include <unordered_set>
+#include <cstdint>
 
 class Packer{
 public:
@@ -14,6 +15,14 @@ private:
     bool validate_dpmeta(const std::string& path);
     bool validate_dpmeta(Dictionary<std::string, std::string> dpmeta_content_dictionary);
     Dictionary<std::string, std::string> read_dpmeta(const std::string& path);
+    void write_platform_section(std::ofstream &out, const std::string& platform_path, uint64_t platform_section_offset = 0);
+
+    struct FileEntry {
+        std::string relative_path;
+        std::string content;
+        uint64_t relative_path_sizeof;
+        uint64_t content_sizeof;
+    };
 };
 
 const std::unordered_set<std::string> mandatory_dpmeta_fields = {

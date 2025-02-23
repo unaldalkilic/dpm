@@ -57,22 +57,22 @@ void Packer::pack(const std::string& path) {
     // Write the contents of each platform //
     if (has_linux) {
         linux_offset = current_offset;
-        //
+        write_platform_section(dp_file, path + "/linux");
         current_offset = dp_file.tellp();
     }
     if (has_windows) {
         win_offset = current_offset;
-        //
+        write_platform_section(dp_file, path + "/win");
         current_offset = dp_file.tellp();
     }
     if (has_mac) {
         mac_offset = current_offset;
-        //
+        write_platform_section(dp_file, path + "/mac");
         current_offset = dp_file.tellp();
     }
     if (has_common) {
         common_offset = current_offset;
-        //
+        write_platform_section(dp_file, path + "/common");
         current_offset = dp_file.tellp();
     }
 
@@ -115,4 +115,56 @@ bool Packer::validate_dpmeta(Dictionary<std::string, std::string> dpmeta_content
             return false;
     }
     return true;
+}
+
+void Packer::write_platform_section(std::ofstream &out, const std::string& platform_path, uint64_t platform_section_offset) {
+    const std::vector<std::string> script_names = {"pre_install", "post_install", "pre_remove", "post_remove"};
+    
+    // Set the out or the platform section offset properly, it is an optional argument.
+    if (platform_section_offset == 0)
+        platform_section_offset = out.tellp();
+    else
+        out.seekp(platform_section_offset);
+    
+    uint64_t source_offset = 0; // Initialize source offset as 0, then we will update this and rewrite
+    out.write(reinterpret_cast<const char*>(&source_offset), sizeof(uint64_t));
+
+    // Write scripts sizes and their contents in given order above (script_names variable)
+    for (std::string script_name: script_names) {
+        std::string script_path = platform_path + "/" + script_name;
+        uint64_t script_sizeof = 0; // Initialize as 0, then update
+
+        if (! std::filesystem::exists(script_path)) {
+            out.write(reinterpret_cast<const char*>(&script_sizeof), sizeof(uint64_t));
+            continue;
+        } 
+
+        std::string script_content = read_file(script_path);
+        script_sizeof = script_content.size();
+        out.write(reinterpret_cast<const char*>(&script_sizeof), sizeof(uint64_t));
+        out.write(script_content.data(), script_sizeof);
+    }
+
+    source_offset = out.tellp();
+    out.seekp(platform_section_offset);
+    out.write(reinterpret_cast<const char*>(&source_offset), sizeof(uint64_t)); // Update the offset value of source folder of platform
+    out.seekp(source_offset); // Return back after updating the offset value, ready to fill source
+    
+    // Fill the source section of the platform //
+    const std::string source_path = platform_path + "/src";
+    if (! std::filesystem::exists(source_path) || ! std::filesystem::is_directory(source_path))
+        return;
+
+    for (const auto &entry: std::filesystem::recursive_directory_iterator(platform_path)) {
+        if (entry.is_regular_file()) {
+            FileEntry file_entry;
+            file_entry.relative_path = std::filesystem::relative(entry.path(), platform_path).string(); // Get relative path in terms of platform
+            file_entry.content = read_file(entry.path().string());
+            file_entry.content_sizeof = file_entry.content.size();
+            file_entry.relative_path_sizeof = file_entry.relative_path.size();
+            
+            out.write(file_entry.relative_path.data(), file_entry.relative_path_sizeof);
+            out.write(file_entry.content.data(), file_entry.content_sizeof);
+        }
+    }
 }
