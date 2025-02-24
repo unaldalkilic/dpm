@@ -10,7 +10,7 @@ std::string read_file(const std::string& filename) {
     return buffer.str();
 }
 
-void writeFile(const std::string& file_path, const std::string& content, bool append = false) {
+void write_file(const std::string& file_path, const std::string& content, bool append) {
     std::ofstream file(file_path, append ? std::ios::app : std::ios::trunc);
 
     if (!file) {

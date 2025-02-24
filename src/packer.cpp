@@ -7,7 +7,7 @@
 void Packer::pack(const std::string& path) {
     // Validate files and folders //
     if (! std::filesystem::exists(path) || ! std::filesystem::is_directory(path))
-        throw TargetNotExist("Given path " + path + " does not exist!");
+        throw TargetNotExist("Given path " + path + " does not exist or not a folder!");
     
     if (! std::filesystem::exists(path + "/dpmeta"))
         throw InvalidPackage("Given path " + path + " does not have any dpmeta file; not suitable to become .dp package");
@@ -31,7 +31,7 @@ void Packer::pack(const std::string& path) {
         throw InvalidPackage("Given path's (" + path + ") dpmeta is invalid!");
 
     // Binary write .dp package section //
-    std::string dp_path = get_cwd() + "/out.dp";
+    std::string dp_path = get_cwd() + "/" + get_filename(path) + ".dp";
     std::ofstream dp_file (dp_path, std::ios::binary);
     if (!dp_file)
         throw std::runtime_error(dp_path+ " package cannot be created!");
@@ -212,4 +212,11 @@ bool Packer::is_dp_package(const std::string& package_path) {
     dp_file.close();
 
     return std::string(magic, 8) == "DPMXPACK";
+}
+
+void Packer::export_package_dpmeta(const std::string& package_path) {
+    const std::string dpmeta_content = get_package_dpmeta(package_path);
+    const std::string folder_name = get_raw_filename(package_path);
+    if (! std::filesystem::create_directory(folder_name)) throw std::runtime_error("Cannot exported the package folder!");
+    write_file("./"+folder_name+"/dpmeta", dpmeta_content);
 }

@@ -28,6 +28,8 @@ enum class Colors { // Check for ansii color codes
 };
 
 std::string get_cwd();
+std::string get_raw_filename(const std::string& path);
+std::string get_filename(const std::string& path);
 std::string version_string_from_int_array(std::tuple<int*, int> version_tuple);
 std::string string(const std::string& content, const OutputType type = OutputType::NONE);
 void print(const std::string& content, const OutputType type = OutputType::NONE);

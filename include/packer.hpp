@@ -12,6 +12,7 @@ public:
     void depack(const std::string& package_path);
     Dictionary<std::string, std::string> get_dpmeta(const std::string& path);
     std::string get_package_dpmeta(const std::string& package_path);
+    void export_package_dpmeta(const std::string& package_path);
 private:
     bool validate_dpmeta(const std::string& path);
     bool validate_dpmeta(Dictionary<std::string, std::string> dpmeta_content_dictionary);
