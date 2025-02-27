@@ -17,6 +17,11 @@ bool Engine::run(Command command) {
             try { packer.pack(get_cwd() + "/" + path); }
             catch (const std::exception &e) { print(e.what(), OutputType::ERROR); }
         break;
+    case CommandType::DEPACK:
+        for (std::string path: command.arguments)
+            try { packer.depack(get_cwd() + "/" + path); }
+            catch (const std::exception &e) { print(e.what(), OutputType::ERROR); }
+        break;
     case CommandType::DPMETA:
         if (command.options.find(Option::EXPORT) != command.options.end()) { // If export option found
             for (std::string package_path: command.arguments)

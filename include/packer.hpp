@@ -18,8 +18,10 @@ private:
     bool validate_dpmeta(Dictionary<std::string, std::string> dpmeta_content_dictionary);
     Dictionary<std::string, std::string> read_dpmeta(const std::string& path);
     void write_platform_section(std::ofstream &out, const std::string& platform_path, uint64_t platform_section_offset = 0);
+    void export_platform_section(std::ifstream &in, const std::string& platform_path, const uint64_t platform_offset);
     Dictionary<std::string, std::string> dpmeta_string_to_dict(const std::string& dpmeta_string);
     bool is_dp_package(const std::string& package_path);
+    std::string get_script_content(std::ifstream &in, const std::string& script_name, const uint64_t platform_offset);
 
     struct FileEntry {
         std::string relative_path;
@@ -35,6 +37,14 @@ const std::unordered_set<std::string> mandatory_dpmeta_fields = {
 
 const std::unordered_set<std::string> optional_dpmeta_fields = {
     "dependent", "dependent-linux", "dependent-win", "dependent-mac"
+};
+
+const std::vector<std::string> dp_script_names = {
+    "pre_install", "post_install", "pre_remove", "post_remove"
+};
+
+const std::vector<std::string> dp_platforms = {
+    "linux", "win", "mac", "common"
 };
 
 #endif
