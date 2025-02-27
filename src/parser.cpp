@@ -1,4 +1,3 @@
-#include <iostream>
 #include "../include/exceptions.hpp"
 #include "../include/parser.hpp"
 
@@ -25,6 +24,7 @@ Command Parser::parse(const int argc, const char* argv[]){
             Option option = string_to_option.get(arg.substr(temp_substr_val)).value_or(Option::NONE);
             if (option == Option::NONE)
                 continue;
+            result.options.insert(option);
         }
         else 
             result.arguments.push_back(arg);

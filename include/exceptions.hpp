@@ -29,4 +29,14 @@ public:
     explicit TargetNotExist(const std::string& msg) : DPMException(msg) {}
 };
 
+class InvalidPackage : public DPMException {
+public:
+    explicit InvalidPackage(const std::string& msg) : DPMException(msg) {}
+};
+
+class UnknownPlatform : public DPMException {
+public:
+    explicit UnknownPlatform(const std::string& msg) : DPMException(msg) {}
+};
+
 #endif

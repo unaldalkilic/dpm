@@ -2,7 +2,7 @@
 #define PARSER_META_HPP
 
 #include <unordered_set>
-#include "data.hpp"
+#include "dictionary.hpp"
 #include <vector>
 #include <string>
 
@@ -12,11 +12,15 @@ enum class CommandType {
     HELP,
     VERSION,
     PACK,
+    DEPACK,
+    DPMETA,
     NONE
 };
 
 enum class Option {
     YES,
+    EXPORT,
+    ALL,
     NONE
 };
 
@@ -30,13 +34,18 @@ const Dictionary<std::string, CommandType> string_to_command_type({
     {"install", CommandType::INSTALL},
     {"remove", CommandType::REMOVE},
     {"help", CommandType::HELP},
-    {"version", CommandType::VERSION}
+    {"version", CommandType::VERSION},
+    {"pack", CommandType::PACK},
+    {"depack", CommandType::DEPACK},
+    {"dpmeta", CommandType::DPMETA}
 });
 
 
 const Dictionary<std::string, Option> string_to_option({
     {"y", Option::YES},
-    {"yes", Option::YES}
+    {"yes", Option::YES},
+    {"export", Option::EXPORT},
+    {"all", Option::ALL}
 });
 
 
