@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+python3 -m venv /var/lib/sample/.venv || exit 1
+/var/lib/sample/.venv/bin/python3 pip install -r /var/lib/sample/requirements.txt || exit 1
+
+exit 0
