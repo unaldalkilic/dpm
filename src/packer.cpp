@@ -181,6 +181,10 @@ void Packer::write_platform_section(std::ofstream &out, const std::string& platf
     out.write(reinterpret_cast<const char*>(&source_offset), sizeof(uint64_t)); // Update the offset value of source folder of platform
     out.seekp(source_offset); // Return back after updating the offset value, ready to fill source
     
+    // Write the total file count of the source section (we need this value for further exporting operations, check depacking...)
+    uint64_t source_file_count = 0;
+    out.write(reinterpret_cast<char*>(&source_file_count), sizeof(uint64_t));
+
     // Fill the source section of the platform //
     const std::string source_path = platform_path + (get_raw_filename(platform_path) != "common" ? "/src" : "");
     if (! std::filesystem::exists(source_path) || ! std::filesystem::is_directory(source_path))
@@ -194,10 +198,20 @@ void Packer::write_platform_section(std::ofstream &out, const std::string& platf
             file_entry.content_sizeof = file_entry.content.size();
             file_entry.relative_path_sizeof = file_entry.relative_path.size();
             
+            out.write(reinterpret_cast<char*>(&file_entry.relative_path_sizeof), sizeof(uint64_t));
+            out.write(reinterpret_cast<char*>(&file_entry.content_sizeof), sizeof(uint64_t));
             out.write(file_entry.relative_path.data(), file_entry.relative_path_sizeof);
             out.write(file_entry.content.data(), file_entry.content_sizeof);
+
+            source_file_count += 1;
         }
     }
+    const uint64_t platform_section_end_offset = out.tellp();
+
+    // Update the current source file count value
+    out.seekp(source_offset);
+    out.write(reinterpret_cast<char*>(&source_file_count), sizeof(uint64_t));
+    out.seekp(platform_section_end_offset); // Return back to end of the platform offset to continue writing operations for other platforms
 }
 
 void Packer::export_platform_section(std::ifstream &in, const std::string& platform_path, const uint64_t platform_offset) {
@@ -212,7 +226,30 @@ void Packer::export_platform_section(std::ifstream &in, const std::string& platf
     }
 
     in.seekg(src_offset);
-    // src section TODO
+    uint64_t platform_source_file_count;
+    in.read(reinterpret_cast<char*>(&platform_source_file_count), sizeof(uint64_t));
+
+    // The loop for to depack source files
+    // TODO segmentation fault for sizeof values!
+    for (int i = 0; i < platform_source_file_count; i++) {
+        uint64_t relative_path_sizeof;
+        in.read(reinterpret_cast<char*>(&relative_path_sizeof), sizeof(uint64_t));
+        uint64_t content_sizeof;
+        in.read(reinterpret_cast<char*>(&content_sizeof), sizeof(uint64_t));
+
+        char relative_path[relative_path_sizeof];
+        in.read(relative_path, relative_path_sizeof);
+        std::string relative_path_str = std::string(relative_path, relative_path_sizeof);
+
+        std::string content_str = "";
+        if (content_sizeof > 0) {
+            char content[content_sizeof];
+            in.read(content, content_sizeof);
+            content_str = std::string(content, content_sizeof);
+        }
+
+        write_file(platform_path + "/" + relative_path_str, content_str);
+    }
 }
 
 std::string Packer::get_package_dpmeta(const std::string& package_path) {
