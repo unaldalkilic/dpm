@@ -86,7 +86,9 @@ void Packer::pack(const std::string& path) {
     dp_file.close();
 }
 
-void Packer::depack(const std::string& package_path) {
+void Packer::depack(const std::string& package_path, bool all) {
+    std::string current_os = get_os_name();
+    if (current_os == "unknown") throw UnknownPlatform("Current OS is unknown :(");
     if (! is_dp_package(package_path)) throw InvalidParameter("Given " + package_path + " package is not a .dp package!");
 
     const std::string folder_name = get_raw_filename(package_path);
@@ -106,6 +108,7 @@ void Packer::depack(const std::string& package_path) {
     }
 
     for (std::string platform_name: platform_offset_dict.keys()) {
+        if (! all && (platform_name != current_os && platform_name != "common")) continue; // If not all, only depack the OS folder and common folder
         uint64_t platform_offset = platform_offset_dict.get(platform_name).value_or(0);
         if (platform_offset == 0) continue; // platform does not exist for this package
         if (! std::filesystem::create_directories(folder_name+"/"+platform_name)) throw std::runtime_error("Cannot create the platform folder while exporting the package!");

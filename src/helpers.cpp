@@ -2,6 +2,31 @@
 #include "../include/helpers.hpp"
 #include <sstream>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <sys/utsname.h>
+#endif
+
+std::string get_os_name() {
+    #ifdef _WIN32
+        return "win";
+    #else
+        struct utsname sysinfo;
+        if (uname(&sysinfo) != 0) {
+            return "unknown";
+        }
+        std::string os_name(sysinfo.sysname);
+        if (os_name == "Darwin") {
+            return "mac";
+        } else if (os_name == "Linux") {
+            return "linux";
+        } else {
+            return "unknown";
+        }
+    #endif
+}
+
 std::string get_cwd() {
     char cwd[1024];
     #ifdef _WIN32

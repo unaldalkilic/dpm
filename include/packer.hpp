@@ -9,7 +9,7 @@
 class Packer{
 public:
     void pack(const std::string& path);
-    void depack(const std::string& package_path);
+    void depack(const std::string& package_path, bool all = false);
     Dictionary<std::string, std::string> get_dpmeta(const std::string& path);
     std::string get_package_dpmeta(const std::string& package_path);
     void export_package_dpmeta(const std::string& package_path);

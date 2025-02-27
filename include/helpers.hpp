@@ -27,6 +27,7 @@ enum class Colors { // Check for ansii color codes
     WHITE = 37
 };
 
+std::string get_os_name();
 std::string get_cwd();
 std::string get_raw_filename(const std::string& path);
 std::string get_filename(const std::string& path);

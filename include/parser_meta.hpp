@@ -20,6 +20,7 @@ enum class CommandType {
 enum class Option {
     YES,
     EXPORT,
+    ALL,
     NONE
 };
 
@@ -43,7 +44,8 @@ const Dictionary<std::string, CommandType> string_to_command_type({
 const Dictionary<std::string, Option> string_to_option({
     {"y", Option::YES},
     {"yes", Option::YES},
-    {"export", Option::EXPORT}
+    {"export", Option::EXPORT},
+    {"all", Option::ALL}
 });
 
 

@@ -34,4 +34,9 @@ public:
     explicit InvalidPackage(const std::string& msg) : DPMException(msg) {}
 };
 
+class UnknownPlatform : public DPMException {
+public:
+    explicit UnknownPlatform(const std::string& msg) : DPMException(msg) {}
+};
+
 #endif
